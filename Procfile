@@ -1,1 +1,1 @@
-worker: SGAboy.py
+worker: python SGAboy.py
