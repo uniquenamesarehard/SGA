@@ -1,12 +1,16 @@
 import discord
+import os
 from discord.ext import commands
+import re
 import random
 import asyncio
 
 # info #
+BOT_PREFIX = os.environ['prefix']
+TOKEN = os.environ['token']
 desc = "Disclaimer: Does not actually give advice"
 game = "DM me for advice!"
-bot = commands.Bot(command_prefix='.', description=desc)
+bot = commands.Bot(command_prefix=BOT_PREFIX)
 ID = '506532714279862272'
 platform = {'PC' : 4}
 
@@ -65,26 +69,26 @@ async def on_ready():
     global num
     global member_role
     global me
-    #generalc = bot.get_channel('')
+    generalc = bot.get_channel('570609373051748370')
     #memec = bot.get_channel('')
     #metac = bot.get_channel('')
-    mailc = bot.get_channel('519229606285279242')
-    testc = bot.get_channel('506473930786078730')
-    consolec = bot.get_channel('519228200753299466')
+    mailc = bot.get_channel('621707814095552522')
+    testc = bot.get_channel('621707829874655317')
+    consolec = bot.get_channel('621707842566750219')
 
-    test_server = bot.get_server('506473743791685636')
-    sga_server = bot.get_server('455521454528659485')
+    test_server = bot.get_server('570609373051748368')
+    #sga_server = bot.get_server('455521454528659485')
 
     #owner_role = discord.utils.get(sga_server.roles, id='455802683312439297')
-    mod_role = discord.utils.get(sga_server.roles, id='455803368548597781')
-    member_role = discord.utils.get(sga_server.roles, id='455804701292757005')
+    #mod_role = discord.utils.get(sga_server.roles, id='455803368548597781')
+    #member_role = discord.utils.get(sga_server.roles, id='455804701292757005')
 
-    test_role = discord.utils.get(test_server.roles, id='512634084439359494')
-    testmrole = discord.utils.get(test_server.roles, id='512673489430380546')
+    test_role = discord.utils.get(test_server.roles, id='570609529553813525')
+    testmrole = discord.utils.get(test_server.roles, id='621707401023848464')
 
 
     me = test_server.get_member('270265832313978891')
-    me = sga_server.get_member('270265832313978891')
+    #me = sga_server.get_member('270265832313978891')
     selected_user = me
     print('Logged in as')
     print(bot.user.name)
@@ -109,8 +113,8 @@ async def on_ready():
 
 
 
-async def in_droid_console(ctx):
-    console_channels = set([consolec.id, mailc.id])
+async def in_console(ctx):
+    console_channels = set([consolec.id, mailc.id, testc.id])
     okay = (ctx.message.channel.id in console_channels) or (ctx.message.server.id == test_server.id)
     if not okay:
         await bot.delete_message(ctx.message)
@@ -163,13 +167,13 @@ async def pm_embed(who: discord.User, chan: discord.Channel, msg: discord.Messag
 
 @bot.command(pass_context=True)
 async def dice(ctx):
-    if await in_droid_console(ctx):
+    if await in_console(ctx):
         msg = str(random.randint(1,6))
         await bot.say(msg)
 
 @bot.command(pass_context=True)
 async def sga(ctx, branch: int, who: discord.User):
-    if await in_droid_console(ctx):
+    if await in_console(ctx):
         roles = ["512673489430380546", mod_role.id]
         for y in ctx.message.author.roles:
             if y.id in roles:
@@ -204,7 +208,7 @@ async def riddle():
 
 @bot.command(pass_context=True)
 async def say(ctx, chan: discord.Channel, *msg_in: str):
-    if await in_droid_console(ctx):
+    if await in_console(ctx):
         msg = ' '.join(msg_in)
         await bot.send_message(chan, msg)
         await bot.delete_message(ctx.message)
@@ -214,7 +218,7 @@ async def pm(ctx, rec: discord.User, *msg_in: str):
     if rec.id != bot.user.id:
         await select_user(rec)
 
-    if await in_droid_console(ctx):
+    if await in_console(ctx):
         msg = ' '.join(msg_in)
         mes = await bot.send_message(selected_user, msg)
         await sent_embed(selected_user, mailc, mes)
@@ -260,7 +264,7 @@ async def on_message(message):
     except ('InvalidArgument', 'CommandInvokeError'):
         pass
 
-file = open('commands.json', 'r')
+file = open('config.json', 'r')
 contents = file.read()
 
-bot.run(contents) #token
+bot.run(TOKEN) #token
