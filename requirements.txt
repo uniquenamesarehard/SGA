@@ -1,3 +1,1 @@
-discord
-asyncio
-random
+git+git://github.com/Rapptz/discord.py.git@async#egg=discord
